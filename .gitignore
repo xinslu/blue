@@ -33,3 +33,6 @@
 
 # Bazel Dependencies
 bazel-*
+
+# Build folder
+build/
