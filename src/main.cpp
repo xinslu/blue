@@ -3,7 +3,7 @@
 #include <fstream>
 #include <string>
 #include <filesystem>
-#include "lexer.hpp"
+#include "lexer.cpp"
 
 int main(int argc, char *argv[]) {
 
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
 
     Lexer lexer = Lexer(code);
 
-    lexer.parse();
+    lexer.tokenize();
 
     return 0;
 }

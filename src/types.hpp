@@ -2,6 +2,7 @@ enum Token {
     IDENTIFIER,
     NUMBER,
     INT,
+    STRING_TYPE,
     STRING,
     FLOAT,
     FUNC,

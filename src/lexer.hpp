@@ -6,10 +6,14 @@ class Lexer {
 public:
     // Fields
     bool stringMode;
+    bool waitForSpace;
     int row;
     int col;
+    int index;
     std::vector<Token> tokens;
     std::string input;
+    std::string stringBuf;
+    size_t length;
 
     // Constructors and Desctructors
     Lexer(std::string);
