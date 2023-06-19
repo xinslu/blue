@@ -6,11 +6,11 @@ class Lexer {
 public:
     // Fields
     bool stringMode;
-    bool waitForSpace;
+    bool waitForDelim;
     int row;
     int col;
     int index;
-    std::vector<Token> tokens;
+    std::vector<Lexed> tokens;
     std::string input;
     std::string stringBuf;
     size_t length;
@@ -25,8 +25,9 @@ public:
 
     // Methods
     void tokenize();
+    void print();
 
 private:
-
+    void handle_delimiter();
 };
 

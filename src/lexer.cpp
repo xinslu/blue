@@ -1,5 +1,11 @@
 #include "lexer.hpp"
 #include <iostream>
+#include <algorithm>
+#include <string>
+
+int count_space(std::string s) {
+    return std::count_if(s.begin(), s.end(), [](unsigned char c){ return std::isspace(c); });
+}
 
 Lexer::Lexer(std::string file) {
   this->stringMode = false;
@@ -8,7 +14,7 @@ Lexer::Lexer(std::string file) {
   this->input = file;
   this->length = file.length();
   this->index = 0;
-  this->waitForSpace = false;
+  this->waitForDelim = false;
   this->stringBuf = "";
 }
 
@@ -19,46 +25,36 @@ void Lexer::tokenize() {
     char token = this->input[this->index];
     switch (token) {
     case '{':
-      this->tokens.push_back(Token::BRACE_OPEN);
+      handle_delimiter();
+      this->tokens.push_back(Lexed{.token =  Token::BRACE_OPEN, .row = this->row, .col = this->col});
       break;
     case '}':
-      this->tokens.push_back(Token::BRACE_CLOSE);
+      handle_delimiter();
+      this->tokens.push_back(Lexed{.token = Token::BRACE_CLOSE, .row = this->row, .col = this->col});
       break;
     case '(':
-      this->tokens.push_back(Token::LEFT_PAREN);
+      handle_delimiter();
+      this->tokens.push_back(Lexed{.token = Token::LEFT_PAREN,  .row = this->row, .col = this->col});
       break;
     case ')':
-      this->tokens.push_back(Token::RIGHT_PAREN);
+      handle_delimiter();
+      this->tokens.push_back(Lexed{.token = Token::RIGHT_PAREN, .row = this->row, .col = this->col});
       break;
     case ':':
-      this->tokens.push_back(Token::COLON);
+      handle_delimiter();
+      this->tokens.push_back(Lexed{.token = Token::COLON, .row = this->row, .col = this->col});
       break;
     case '\n':
+      handle_delimiter();
       this->row++;
       this->col = 0;
       break;
     case ' ':
-        this->waitForSpace = false;
-        if (this->stringBuf == "func") {
-            this->tokens.push_back(Token::FUNC);
-        } else if (this->stringBuf == "return") {
-            this->tokens.push_back(Token::RETURN);
-        } else if (this->stringBuf == "int") {
-            this->tokens.push_back(Token::INT);
-        } else if (this->stringBuf == "float") {
-            this->tokens.push_back(Token::FLOAT);
-        } else if (this->stringBuf == "string") {
-            this->tokens.push_back(Token::STRING_TYPE);
-        } else if (this->stringBuf == "string") {
-            this->tokens.push_back(Token::STRING);
-        } else {
-            this->tokens.push_back(Token::IDENTIFIER);
-        }
-        this->stringBuf = "";
-        break;
+      handle_delimiter();
+      break;
     default:
-      if (this->waitForSpace == false) {
-        this->waitForSpace = true;
+      if (!this->waitForDelim) {
+        this->waitForDelim = true;
       }
       this->stringBuf.push_back(token);
       break;
@@ -66,4 +62,39 @@ void Lexer::tokenize() {
     this->index++;
     this->col++;
   }
+}
+
+void Lexer::print() {
+  for (auto i : this->tokens) {
+    std::cout << "Token Type: " << token_debug[i.token];
+    if (i.string) {
+      std::cout << " String Value: " << *i.string << " ";
+    }
+    std::cout << " Row: " << i.row+1;
+    std::cout << " Column: " << i.col+1;
+
+    std::cout << std::endl;
+  }
+}
+
+void Lexer::handle_delimiter() {
+  this->waitForDelim = false;
+  int processed = count_space(this->stringBuf);
+
+  if (!this->stringMode) {
+    if (this->stringBuf == "func") {
+      this->tokens.push_back(Lexed{.token = Token::FUNC, .row =  this->row, .col = this->col});
+    } else if (this->stringBuf == "return") {
+      this->tokens.push_back(Lexed{.token = Token::RETURN, .row =  this->row, .col = this->col});
+    } else if (this->stringBuf == "int") {
+      this->tokens.push_back(Lexed{.token = Token::INT, .row =  this->row, .col = this->col});
+    } else if (this->stringBuf == "float") {
+      this->tokens.push_back(Lexed{.token = Token::FLOAT, .row =  this->row, .col = this->col});
+    } else if (this->stringBuf == "string") {
+      this->tokens.push_back(Lexed{.token = Token::STRING, .row =  this->row, .col = this->col});
+    } else if (this->stringBuf.length()) {
+      this->tokens.push_back(Lexed{.token = Token::IDENTIFIER, .string = this->stringBuf, .row =  this->row, .col = this->col});
+    }
+  }
+  this->stringBuf = "";
 }
