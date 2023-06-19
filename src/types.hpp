@@ -41,7 +41,18 @@ struct Lexed {
     std::optional<std::string> string;
     int row;
     int col;
+
+    Lexed(Token token, int row, int col) {
+        this->token = token;
+        this->row = row;
+        this->col = col;
+    }
+
+    Lexed(Token token, std::string value, int row, int col) {
+        this->token = token;
+        this->string = value;
+        this->row = row;
+        this->col = col;
+    }
 };
-
-
 
