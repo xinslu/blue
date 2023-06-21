@@ -114,7 +114,6 @@ void Lexer::print() {
 
 void Lexer::handle_delimiter() {
   this->waitForDelim = false;
-  int processed = count_space(this->stringBuf);
 
   if (!this->stringMode and this->stringBuf.length()) {
     if (this->stringBuf == "func") {
@@ -127,6 +126,12 @@ void Lexer::handle_delimiter() {
       this->tokens.push_back(Lexed(Token::FLOAT, this->row, this->col));
     } else if (this->stringBuf == "string") {
       this->tokens.push_back(Lexed(Token::STRING, this->row, this->col));
+    } else if (this->stringBuf == "bool") {
+      this->tokens.push_back(Lexed(Token::BOOL, this->row, this->col));
+    } else if (this->stringBuf == "true") {
+      this->tokens.push_back(Lexed(Token::TRUE, this->row, this->col));
+    } else if (this->stringBuf == "false") {
+      this->tokens.push_back(Lexed(Token::FALSE, this->row, this->col));
     } else if (this->stringBuf.find_first_not_of("0123456789") ==
                std::string::npos) {
       this->tokens.push_back(
