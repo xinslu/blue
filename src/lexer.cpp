@@ -45,6 +45,10 @@ void Lexer::tokenize() {
       handle_delimiter();
       this->tokens.push_back(Lexed(Token::COLON, this->row, this->col));
       break;
+    case '=':
+      handle_delimiter();
+      this->tokens.push_back(Lexed(Token::EQUAL, this->row, this->col));
+      break;
     case '\n':
       handle_delimiter();
       this->row++;
@@ -102,7 +106,7 @@ void Lexer::handle_delimiter() {
   this->waitForDelim = false;
   int processed = count_space(this->stringBuf);
 
-  if (!this->stringMode) {
+  if (!this->stringMode and this->stringBuf.length()) {
     if (this->stringBuf == "func") {
       this->tokens.push_back(Lexed(Token::FUNC, this->row, this->col));
     } else if (this->stringBuf == "return") {
@@ -113,7 +117,11 @@ void Lexer::handle_delimiter() {
       this->tokens.push_back(Lexed(Token::FLOAT, this->row, this->col));
     } else if (this->stringBuf == "string") {
       this->tokens.push_back(Lexed(Token::STRING, this->row, this->col));
-    } else if (this->stringBuf.length()) {
+    } else if (this->stringBuf.find_first_not_of("0123456789") == std::string::npos) {
+      this->tokens.push_back(Lexed(Token::INT_TYPE, this->stringBuf, this->row, this->col));
+    } else if (std::count_if( this->stringBuf.begin(), this->stringBuf.end(), []( char c ){return c =='.';}) == 1) {
+      this->tokens.push_back(Lexed(Token::FLOAT_TYPE, this->stringBuf, this->row, this->col));
+    } else {
       this->tokens.push_back(Lexed{Token::IDENTIFIER, this->stringBuf, this->row, this->col});
     }
   }
