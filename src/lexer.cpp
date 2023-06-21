@@ -132,6 +132,14 @@ void Lexer::handle_delimiter() {
       this->tokens.push_back(Lexed(Token::TRUE, this->row, this->col));
     } else if (this->stringBuf == "false") {
       this->tokens.push_back(Lexed(Token::FALSE, this->row, this->col));
+    } else if (this->stringBuf == "not") {
+      this->tokens.push_back(Lexed(Token::NOT, this->row, this->col));
+    } else if (this->stringBuf == "and") {
+      this->tokens.push_back(Lexed(Token::AND, this->row, this->col));
+    } else if (this->stringBuf == "or") {
+      this->tokens.push_back(Lexed(Token::OR, this->row, this->col));
+    } else if (this->stringBuf == "void") {
+      this->tokens.push_back(Lexed(Token::VOID, this->row, this->col));
     } else if (this->stringBuf.find_first_not_of("0123456789") ==
                std::string::npos) {
       this->tokens.push_back(
