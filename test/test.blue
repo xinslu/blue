@@ -4,3 +4,4 @@ func bruh(a: int, b: int) {
 
 a = -1
 b = 1.01
+c = "bruh bruh"

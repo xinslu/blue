@@ -49,6 +49,16 @@ void Lexer::tokenize() {
       handle_delimiter();
       this->tokens.push_back(Lexed(Token::EQUAL, this->row, this->col));
       break;
+    case '\"':
+      if (!this->stringMode) {
+        handle_delimiter();
+        this->stringMode = true;
+      } else {
+        this->stringMode = false;
+        this->tokens.push_back(Lexed(Token::STRING, this->stringBuf, this->row, this->col));
+        this->stringBuf = "";
+      }
+      break;
     case '\n':
       handle_delimiter();
       this->row++;
@@ -117,14 +127,21 @@ void Lexer::handle_delimiter() {
       this->tokens.push_back(Lexed(Token::FLOAT, this->row, this->col));
     } else if (this->stringBuf == "string") {
       this->tokens.push_back(Lexed(Token::STRING, this->row, this->col));
-    } else if (this->stringBuf.find_first_not_of("0123456789") == std::string::npos) {
-      this->tokens.push_back(Lexed(Token::INT_TYPE, this->stringBuf, this->row, this->col));
-    } else if (std::count_if( this->stringBuf.begin(), this->stringBuf.end(), []( char c ){return c =='.';}) == 1) {
-      this->tokens.push_back(Lexed(Token::FLOAT_TYPE, this->stringBuf, this->row, this->col));
+    } else if (this->stringBuf.find_first_not_of("0123456789") ==
+               std::string::npos) {
+      this->tokens.push_back(
+          Lexed(Token::INT_TYPE, this->stringBuf, this->row, this->col));
+    } else if (std::count_if(this->stringBuf.begin(), this->stringBuf.end(),
+                             [](char c) { return c == '.'; }) == 1) {
+      this->tokens.push_back(
+          Lexed(Token::FLOAT_TYPE, this->stringBuf, this->row, this->col));
     } else {
-      this->tokens.push_back(Lexed{Token::IDENTIFIER, this->stringBuf, this->row, this->col});
+      this->tokens.push_back(
+          Lexed{Token::IDENTIFIER, this->stringBuf, this->row, this->col});
     }
+    this->stringBuf = "";
+  } else if (this->stringMode) {
+    this->stringBuf.push_back(this->input[this->index]);
   }
 
-  this->stringBuf = "";
 }
