@@ -53,6 +53,26 @@ void Lexer::tokenize() {
     case ' ':
       handle_delimiter();
       break;
+    case '+':
+      handle_delimiter();
+      this->tokens.push_back(Lexed(Token::PLUS, this->row, this->col));
+      break;
+    case '-':
+      handle_delimiter();
+      this->tokens.push_back(Lexed(Token::MINUS, this->row, this->col));
+      break;
+    case ',':
+      handle_delimiter();
+      this->tokens.push_back(Lexed(Token::COMMA, this->row, this->col));
+      break;
+    case '*':
+      handle_delimiter();
+      this->tokens.push_back(Lexed(Token::MULTIPLY, this->row, this->col));
+      break;
+    case '/':
+      handle_delimiter();
+      this->tokens.push_back(Lexed(Token::DIVIDE, this->row, this->col));
+      break;
     default:
       if (!this->waitForDelim) {
         this->waitForDelim = true;
@@ -97,5 +117,6 @@ void Lexer::handle_delimiter() {
       this->tokens.push_back(Lexed{Token::IDENTIFIER, this->stringBuf, this->row, this->col});
     }
   }
+
   this->stringBuf = "";
 }

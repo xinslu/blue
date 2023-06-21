@@ -16,7 +16,12 @@ enum Token {
     RETURN,
     COLON,
     BRACE_OPEN,
-    BRACE_CLOSE
+    BRACE_CLOSE,
+    PLUS,
+    MINUS,
+    MULTIPLY,
+    DIVIDE,
+    COMMA,
 };
 
 const char *token_debug[] = {
@@ -33,7 +38,12 @@ const char *token_debug[] = {
     "RETURN",
     "COLON",
     "BRACE_OPEN",
-    "BRACE_CLOSE"
+    "BRACE_CLOSE",
+    "PLUS",
+    "MINUS",
+    "MULTIPLY",
+    "DIVIDE",
+    "COMMA",
 };
 
 struct Lexed {
