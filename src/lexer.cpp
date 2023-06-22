@@ -27,27 +27,55 @@ void Lexer::tokenize() {
     switch (token) {
     case '{':
       handle_delimiter();
-      this->tokens.push_back(Lexed(Token::BRACE_OPEN, this->row, this->col));
+      this->append_token(Token::BRACE_OPEN);
       break;
     case '}':
       handle_delimiter();
-      this->tokens.push_back(Lexed(Token::BRACE_CLOSE, this->row, this->col));
+      this->append_token(Token::BRACE_CLOSE);
       break;
     case '(':
       handle_delimiter();
-      this->tokens.push_back(Lexed(Token::LEFT_PAREN, this->row, this->col));
+      this->append_token(Token::LEFT_PAREN);
       break;
     case ')':
       handle_delimiter();
-      this->tokens.push_back(Lexed(Token::RIGHT_PAREN, this->row, this->col));
+      this->append_token(Token::RIGHT_PAREN);
       break;
     case ':':
       handle_delimiter();
-      this->tokens.push_back(Lexed(Token::COLON, this->row, this->col));
+      this->append_token(Token::COLON);
       break;
     case '=':
       handle_delimiter();
-      this->tokens.push_back(Lexed(Token::EQUAL, this->row, this->col));
+      this->append_token(Token::EQUAL);
+      break;
+    case '+':
+      handle_delimiter();
+      this->append_token(Token::PLUS);
+      break;
+    case '-':
+      handle_delimiter();
+      this->append_token(Token::MINUS);
+      break;
+    case ',':
+      handle_delimiter();
+      this->append_token(Token::COMMA);
+      break;
+    case '*':
+      handle_delimiter();
+      this->append_token(Token::MULTIPLY);
+      break;
+    case '/':
+      handle_delimiter();
+      this->append_token(Token::DIVIDE);
+      break;
+    case ' ':
+      handle_delimiter();
+      break;
+    case '\n':
+      handle_delimiter();
+      this->row++;
+      this->col = 0;
       break;
     case '\"':
       if (!this->stringMode) {
@@ -58,34 +86,6 @@ void Lexer::tokenize() {
         this->tokens.push_back(Lexed(Token::STRING, this->stringBuf, this->row, this->col));
         this->stringBuf = "";
       }
-      break;
-    case '\n':
-      handle_delimiter();
-      this->row++;
-      this->col = 0;
-      break;
-    case ' ':
-      handle_delimiter();
-      break;
-    case '+':
-      handle_delimiter();
-      this->tokens.push_back(Lexed(Token::PLUS, this->row, this->col));
-      break;
-    case '-':
-      handle_delimiter();
-      this->tokens.push_back(Lexed(Token::MINUS, this->row, this->col));
-      break;
-    case ',':
-      handle_delimiter();
-      this->tokens.push_back(Lexed(Token::COMMA, this->row, this->col));
-      break;
-    case '*':
-      handle_delimiter();
-      this->tokens.push_back(Lexed(Token::MULTIPLY, this->row, this->col));
-      break;
-    case '/':
-      handle_delimiter();
-      this->tokens.push_back(Lexed(Token::DIVIDE, this->row, this->col));
       break;
     default:
       if (!this->waitForDelim) {
@@ -116,30 +116,8 @@ void Lexer::handle_delimiter() {
   this->waitForDelim = false;
 
   if (!this->stringMode and this->stringBuf.length()) {
-    if (this->stringBuf == "func") {
-      this->tokens.push_back(Lexed(Token::FUNC, this->row, this->col));
-    } else if (this->stringBuf == "return") {
-      this->tokens.push_back(Lexed(Token::RETURN, this->row, this->col));
-    } else if (this->stringBuf == "int") {
-      this->tokens.push_back(Lexed(Token::INT, this->row, this->col));
-    } else if (this->stringBuf == "float") {
-      this->tokens.push_back(Lexed(Token::FLOAT, this->row, this->col));
-    } else if (this->stringBuf == "string") {
-      this->tokens.push_back(Lexed(Token::STRING, this->row, this->col));
-    } else if (this->stringBuf == "bool") {
-      this->tokens.push_back(Lexed(Token::BOOL, this->row, this->col));
-    } else if (this->stringBuf == "true") {
-      this->tokens.push_back(Lexed(Token::TRUE, this->row, this->col));
-    } else if (this->stringBuf == "false") {
-      this->tokens.push_back(Lexed(Token::FALSE, this->row, this->col));
-    } else if (this->stringBuf == "not") {
-      this->tokens.push_back(Lexed(Token::NOT, this->row, this->col));
-    } else if (this->stringBuf == "and") {
-      this->tokens.push_back(Lexed(Token::AND, this->row, this->col));
-    } else if (this->stringBuf == "or") {
-      this->tokens.push_back(Lexed(Token::OR, this->row, this->col));
-    } else if (this->stringBuf == "void") {
-      this->tokens.push_back(Lexed(Token::VOID, this->row, this->col));
+    if (keyword_mapping.find(this->stringBuf) != keyword_mapping.end()) {
+        this->append_token(keyword_mapping.at(this->stringBuf));
     } else if (this->stringBuf.find_first_not_of("0123456789") ==
                std::string::npos) {
       this->tokens.push_back(
@@ -149,12 +127,14 @@ void Lexer::handle_delimiter() {
       this->tokens.push_back(
           Lexed(Token::FLOAT_TYPE, this->stringBuf, this->row, this->col));
     } else {
-      this->tokens.push_back(
-          Lexed{Token::IDENTIFIER, this->stringBuf, this->row, this->col});
+      this->tokens.push_back(Lexed{Token::IDENTIFIER, this->stringBuf, this->row, this->col});
     }
     this->stringBuf = "";
   } else if (this->stringMode) {
     this->stringBuf.push_back(this->input[this->index]);
   }
+}
 
+void Lexer::append_token(Token token) {
+    this->tokens.push_back(Lexed(token, this->row, this->col));
 }
