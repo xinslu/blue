@@ -10,3 +10,9 @@ bool d = false and true or (not false)
 if (d and a) {
     print(b)
 }
+
+struct bruh {
+    int a,
+    float b,
+    string c
+}
