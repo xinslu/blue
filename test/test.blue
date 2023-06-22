@@ -2,7 +2,7 @@ func bruh(a: int, b: int) void {
     return a+b
 }
 
-int a = -1
+int a = -1 + 2 / 3 *4
 float b = 1.01
 string c = "bruh, bruh-bruh+bruh:bruh/bruh=bruh"
 bool d = false and true or (not false)

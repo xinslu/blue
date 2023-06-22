@@ -24,75 +24,37 @@ Lexer::~Lexer() { this->tokens.clear(); }
 void Lexer::tokenize() {
   while (this->index < this->length) {
     char token = this->input[this->index];
-    switch (token) {
-    case '{':
+    if (delim_mapping.find(token) != delim_mapping.end()) {
       handle_delimiter();
-      this->append_token(Token::BRACE_OPEN);
-      break;
-    case '}':
-      handle_delimiter();
-      this->append_token(Token::BRACE_CLOSE);
-      break;
-    case '(':
-      handle_delimiter();
-      this->append_token(Token::LEFT_PAREN);
-      break;
-    case ')':
-      handle_delimiter();
-      this->append_token(Token::RIGHT_PAREN);
-      break;
-    case ':':
-      handle_delimiter();
-      this->append_token(Token::COLON);
-      break;
-    case '=':
-      handle_delimiter();
-      this->append_token(Token::EQUAL);
-      break;
-    case '+':
-      handle_delimiter();
-      this->append_token(Token::PLUS);
-      break;
-    case '-':
-      handle_delimiter();
-      this->append_token(Token::MINUS);
-      break;
-    case ',':
-      handle_delimiter();
-      this->append_token(Token::COMMA);
-      break;
-    case '*':
-      handle_delimiter();
-      this->append_token(Token::MULTIPLY);
-      break;
-    case '/':
-      handle_delimiter();
-      this->append_token(Token::DIVIDE);
-      break;
-    case ' ':
-      handle_delimiter();
-      break;
-    case '\n':
-      handle_delimiter();
-      this->row++;
-      this->col = 0;
-      break;
-    case '\"':
-      if (!this->stringMode) {
+      this->append_token(delim_mapping.at(token));
+    } else {
+      switch (token) {
+      case ' ':
         handle_delimiter();
-        this->stringMode = true;
-      } else {
-        this->stringMode = false;
-        this->tokens.push_back(Lexed(Token::STRING, this->stringBuf, this->row, this->col));
-        this->stringBuf = "";
+        break;
+      case '\n':
+        handle_delimiter();
+        this->row++;
+        this->col = 0;
+        break;
+      case '\"':
+        if (!this->stringMode) {
+          handle_delimiter();
+          this->stringMode = true;
+        } else {
+          this->stringMode = false;
+          this->tokens.push_back(
+              Lexed(Token::STRING, this->stringBuf, this->row, this->col));
+          this->stringBuf = "";
+        }
+        break;
+      default:
+        if (!this->waitForDelim) {
+          this->waitForDelim = true;
+        }
+        this->stringBuf.push_back(token);
+        break;
       }
-      break;
-    default:
-      if (!this->waitForDelim) {
-        this->waitForDelim = true;
-      }
-      this->stringBuf.push_back(token);
-      break;
     }
     this->index++;
     this->col++;
@@ -117,7 +79,7 @@ void Lexer::handle_delimiter() {
 
   if (!this->stringMode and this->stringBuf.length()) {
     if (keyword_mapping.find(this->stringBuf) != keyword_mapping.end()) {
-        this->append_token(keyword_mapping.at(this->stringBuf));
+      this->append_token(keyword_mapping.at(this->stringBuf));
     } else if (this->stringBuf.find_first_not_of("0123456789") ==
                std::string::npos) {
       this->tokens.push_back(
@@ -127,7 +89,8 @@ void Lexer::handle_delimiter() {
       this->tokens.push_back(
           Lexed(Token::FLOAT_TYPE, this->stringBuf, this->row, this->col));
     } else {
-      this->tokens.push_back(Lexed{Token::IDENTIFIER, this->stringBuf, this->row, this->col});
+      this->tokens.push_back(
+          Lexed{Token::IDENTIFIER, this->stringBuf, this->row, this->col});
     }
     this->stringBuf = "";
   } else if (this->stringMode) {
@@ -136,5 +99,5 @@ void Lexer::handle_delimiter() {
 }
 
 void Lexer::append_token(Token token) {
-    this->tokens.push_back(Lexed(token, this->row, this->col));
+  this->tokens.push_back(Lexed(token, this->row, this->col));
 }
