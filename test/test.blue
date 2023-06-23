@@ -9,6 +9,8 @@ bool d = false and true or (not false)
 
 if (d and a) {
     print(b)
+} else {
+    print(c)
 }
 
 struct bruh {

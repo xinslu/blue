@@ -10,15 +10,17 @@ const char *token_debug[] = {
     "ELSE",       "VOID",   "FUNC",       "LEFT_PAREN", "RIGHT_PAREN",
     "EQUAL",      "RETURN", "COLON",      "BRACE_OPEN", "BRACE_CLOSE",
     "PLUS",       "MINUS",  "MULTIPLY",   "DIVIDE",     "COMMA",
-    "PRINT"};
+    "PRINT",      "STRUCT"};
 
 const std::unordered_map<std::string, Token> keyword_mapping = {
-    {"int", Token::INT},   {"string", Token::STRING}, {"float", Token::FLOAT},
-    {"bool", Token::BOOL}, {"true", Token::TRUE},     {"false", Token::FALSE},
-    {"and", Token::AND},   {"or", Token::OR},         {"not", Token::NOT},
-    {"if", Token::IF},     {"else", Token::ELSE},     {"void", Token::VOID},
-    {"func", Token::FUNC}, {"print", Token::PRINT},   {"struct", Token::STRUCT}
-};
+    {"int", Token::INT},      {"string", Token::STRING},
+    {"float", Token::FLOAT},  {"bool", Token::BOOL},
+    {"true", Token::TRUE},    {"false", Token::FALSE},
+    {"and", Token::AND},      {"or", Token::OR},
+    {"not", Token::NOT},      {"if", Token::IF},
+    {"else", Token::ELSE},    {"void", Token::VOID},
+    {"func", Token::FUNC},    {"print", Token::PRINT},
+    {"struct", Token::STRUCT}};
 
 const std::unordered_map<char, Token> delim_mapping = {
     {'{', Token::BRACE_OPEN}, {'}', Token::BRACE_CLOSE},
