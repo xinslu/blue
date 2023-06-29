@@ -93,7 +93,6 @@ void Lexer::print() {
     if (i.string) {
       std::cout << " String Value: " << *i.string << " ";
     }
-
     std::cout << std::endl;
   }
 }

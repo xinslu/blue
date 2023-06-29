@@ -17,10 +17,6 @@ public:
 
     // Constructors and Desctructors
     Lexer(std::string);
-    Lexer(Lexer &&) = default;
-    Lexer(const Lexer &) = default;
-    Lexer &operator=(Lexer &&) = default;
-    Lexer &operator=(const Lexer &) = default;
     ~Lexer();
 
     // Methods
@@ -31,4 +27,3 @@ private:
     void handle_delimiter();
     void append_token(Token);
 };
-

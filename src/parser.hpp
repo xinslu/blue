@@ -1,70 +1,83 @@
-#include "types.hpp"
 #include <memory>
+#include "types.hpp"
 #include <tuple>
+#include <vector>
 
 class Expr {
 public:
   virtual ~Expr() = default;
 };
 
-class DecExpr: public Expr {
-    std::string name;
-    Token type;
-
+class Parser {
 public:
-    DecExpr(std::string name, Token type)
-    : name(name), type(type) {}
+    std::vector<Lexed> lexed;
+    std::vector<Expr> ast;
+
+    Parser(std::vector<Lexed>);
+    ~Parser();
+
+    void parse();
+
 };
 
-class AssignExpr: public Expr {
-    std::string name;
-    std::optional<Token> type;
-    Expr value;
+// Declaration
+class DecExpr : public Expr {
+  std::string name;
+  Token type;
 
 public:
-    AssignExpr(std::string name, std::optional<Token> type, Expr value)
-    : name(name), type(type), value(value) {}
+  DecExpr(std::string name, Token type) : name(name), type(type) {}
 };
 
-class BinExpr: public Expr {
-    Token op;
-    Expr lhs, rhs;
+// Assignment
+class AssignExpr : public Expr {
+  std::string name;
+  std::optional<Token> type;
+  Expr value;
 
 public:
-    BinExpr(Token op, Expr lhs,
-                Expr rhs)
-    : op(op), lhs(lhs), rhs(rhs) {}
+  AssignExpr(std::string name, std::optional<Token> type, Expr value)
+      : name(name), type(type), value(value) {}
 };
 
+// Binary Operators
+class BinExpr : public Expr {
+  Token op;
+  Expr lhs, rhs;
+
+public:
+  BinExpr(Token op, Expr lhs, Expr rhs) : op(op), lhs(lhs), rhs(rhs) {}
+};
+
+// Function Calls
 class CallExpr : public Expr {
   std::string callee;
   std::vector<Expr> args;
 
 public:
-  CallExpr(std::string callee,
-              std::vector<Expr> args)
-    : callee(callee), args(args) {}
+  CallExpr(std::string callee, std::vector<Expr> args)
+      : callee(callee), args(args) {}
 };
 
-
-class FuncExpr: public Expr {
+// Function Declaration
+class FuncExpr : public Expr {
   std::string name;
   std::vector<std::tuple<Expr, Token>> args;
   Expr body;
 
 public:
-  FuncExpr(std::string name,
-                std::vector<std::tuple<Expr, Token>> args, Expr body)
-    : name(name), args(args), body(body) {}
+  FuncExpr(std::string name, std::vector<std::tuple<Expr, Token>> args,
+           Expr body)
+      : name(name), args(args), body(body) {}
 };
 
-
-class IfExpr: public Expr {
-    Expr cond;
-    Expr body;
-    std::optional<Expr> els;
+// If
+class IfExpr : public Expr {
+  Expr cond;
+  Expr body;
+  std::optional<Expr> els;
 
 public:
   IfExpr(Expr cond, Expr body, std::optional<Expr> els)
-    : cond(cond), body(body), els(els) {}
+      : cond(cond), body(body), els(els) {}
 };

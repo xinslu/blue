@@ -3,6 +3,9 @@
 #include <unordered_map>
 #include <vector>
 
+#ifndef TYPES_H
+#define TYPES_H
+
 enum Token {
   IDENTIFIER,
   NUMBER,
@@ -57,3 +60,5 @@ struct Lexed {
     this->col = col;
   }
 };
+
+#endif // !TYPES_H

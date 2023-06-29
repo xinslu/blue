@@ -4,9 +4,9 @@
 #include <string>
 #include <filesystem>
 #include "lexer.cpp"
+#include "parser.cpp"
 
 int main(int argc, char *argv[]) {
-
     // If you only call the file with the bin, you should get an error.
     if (argc < 2) {
         std::cout << "blue: You must specify a file to compile!" << std::endl;
@@ -32,6 +32,10 @@ int main(int argc, char *argv[]) {
     lexer.tokenize();
 
     lexer.print();
+
+    Parser parser = Parser(lexer.tokens);
+
+    parser.parse();
 
     return 0;
 }
