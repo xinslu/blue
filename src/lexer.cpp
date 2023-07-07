@@ -3,14 +3,6 @@
 #include <iostream>
 #include <string>
 
-const char *token_debug[] = {
-    "IDENTIFIER", "NUMBER", "INT",        "INT_TYPE",   "STRING_TYPE",
-    "STRING",     "FLOAT",  "FLOAT_TYPE", "BOOL",       "TRUE",
-    "FALSE",      "AND",    "OR",         "NOT",        "IF",
-    "ELSE",       "VOID",   "FUNC",       "LEFT_PAREN", "RIGHT_PAREN",
-    "EQUAL",      "RETURN", "COLON",      "BRACE_OPEN", "BRACE_CLOSE",
-    "PLUS",       "MINUS",  "MULTIPLY",   "DIVIDE",     "COMMA",
-    "PRINT",      "STRUCT"};
 
 const std::unordered_map<std::string, Token> keyword_mapping = {
     {"int", Token::INT},      {"string", Token::STRING},
@@ -87,13 +79,7 @@ void Lexer::tokenize() {
 
 void Lexer::print() {
   for (auto i : this->tokens) {
-    std::cout << "Row: " << i.row + 1;
-    std::cout << " Column: " << i.col + 1;
-    std::cout << " Token Type: " << token_debug[i.token];
-    if (i.string) {
-      std::cout << " String Value: " << *i.string << " ";
-    }
-    std::cout << std::endl;
+    std::cout << i << std::endl;
   }
 }
 

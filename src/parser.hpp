@@ -1,5 +1,6 @@
 #include <memory>
 #include "types.hpp"
+#include <iostream>
 #include <tuple>
 #include <vector>
 
@@ -12,6 +13,7 @@ class Parser {
 public:
     std::vector<Lexed> lexed;
     std::vector<Expr> ast;
+    int index;
 
     Parser(std::vector<Lexed>);
     ~Parser();

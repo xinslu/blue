@@ -27,3 +27,4 @@ private:
     void handle_delimiter();
     void append_token(Token);
 };
+
