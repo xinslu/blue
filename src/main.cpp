@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 
     lexer.tokenize();
 
-    lexer.print();
+    /* lexer.print(); */
 
     Parser parser = Parser(lexer.tokens);
 

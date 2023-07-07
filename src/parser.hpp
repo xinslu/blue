@@ -18,7 +18,13 @@ public:
     Parser(std::vector<Lexed>);
     ~Parser();
 
+
     void parse();
+    void increment_check(Lexed &, Token);
+
+private:
+    Lexed get_current();
+    void expect_type(Token, Lexed);
 
 };
 
@@ -63,11 +69,12 @@ public:
 
 // Function Declaration
 class FuncExpr : public Expr {
+public:
   std::string name;
   std::vector<std::tuple<Expr, Token>> args;
   Expr body;
 
-public:
+  FuncExpr();
   FuncExpr(std::string name, std::vector<std::tuple<Expr, Token>> args,
            Expr body)
       : name(name), args(args), body(body) {}
